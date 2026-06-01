@@ -1,0 +1,260 @@
+<odoo>
+
+    <!-- ========================= -->
+    <!-- Séquence -->
+    <!-- ========================= -->
+    <record id="seq_ar_it_demande" model="ir.sequence">
+        <field name="name">AR IT Demande</field>
+        <field name="code">ar.it.demande</field>
+        <field name="prefix">IT-</field>
+        <field name="padding">4</field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- List View -->
+    <!-- ========================= -->
+    <record id="view_ar_it_demande_list" model="ir.ui.view">
+        <field name="name">ar.it.demande.list</field>
+        <field name="model">ar.it.demande</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="demandeur_id"/>
+                <field name="department_id"/>
+                <field name="manager_n1_id"/>
+                <field name="expression_besoin"/>
+                <field name="date_besoin"/>
+                <field name="date_remplacement"/>
+                <field name="periode_from"/>
+                <field name="periode_to"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- Form View -->
+    <!-- ========================= -->
+    <record id="view_ar_it_demande_kanban" model="ir.ui.view">
+        <field name="name">ar.it.demande.kanban</field>
+        <field name="model">ar.it.demande</field>
+        <field name="arch" type="xml">
+            <kanban class="ar_demande_materiel_informatique_kanban" default_group_by="state" quick_create="false">
+                <field name="name"/>
+                <field name="state"/>
+                <field name="expression_besoin"/>
+                <field name="demandeur_id"/>
+                <field name="manager_n1_id"/>
+                <field name="department_id"/>
+                <field name="date_besoin"/>
+                <field name="date_remplacement"/>
+                <field name="periode_from"/>
+                <field name="periode_to"/>
+                <templates>
+                    <t t-name="card">
+                        <div t-attf-class="oe_kanban_global_click oe_kanban_card ar_request_card ar_state_#{record.state.raw_value}">
+                            <div class="ar_card_topline"/>
+                            <div class="ar_card_header">
+                                <div>
+                                    <span class="ar_card_ref"><field name="name"/></span>
+                                    <strong class="ar_card_title">Matériel informatique</strong>
+                                </div>
+                                <span class="ar_card_state"><field name="state"/></span>
+                            </div>
+                            <div class="ar_card_person">
+                                <span class="ar_card_avatar"><i class="fa fa-user"/></span>
+                                <div>
+                                    <span class="ar_card_label">Collaborateur</span>
+                                    <strong><field name="demandeur_id"/></strong>
+                                </div>
+                            </div>
+                            <div class="ar_card_meta">
+                                <span><i class="fa fa-sitemap"/> <field name="department_id"/></span>
+                                <span><i class="fa fa-check-circle"/> <field name="manager_n1_id"/></span>
+                            </div>
+                            <div class="ar_card_dates">
+                                <span><i class="fa fa-tag"/> <field name="expression_besoin"/></span>
+                                <span t-if="record.date_besoin.raw_value"><i class="fa fa-calendar-o"/> <field name="date_besoin"/></span>
+                                <span t-if="record.date_remplacement.raw_value"><i class="fa fa-calendar-o"/> <field name="date_remplacement"/></span>
+                                <span t-if="record.periode_from.raw_value"><i class="fa fa-calendar-o"/> <field name="periode_from"/></span>
+                                <span t-if="record.periode_to.raw_value"><i class="fa fa-calendar-check-o"/> <field name="periode_to"/></span>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_ar_it_demande_form" model="ir.ui.view">
+        <field name="name">ar.it.demande.form</field>
+        <field name="model">ar.it.demande</field>
+        <field name="arch" type="xml">
+            <form string="Demande matériel informatique" class="ar_it_full_width_form ar_it_demande_form">
+
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="new,n1,processing,borrowed,delivered,refused"/>
+                    <field name="can_approve_n1" invisible="True"/>
+                    <field name="is_requester" invisible="True"/>
+
+                    <button name="action_submit_n1"
+                            type="object"
+                            string="Soumettre N+1"
+                            class="btn-success"
+                            invisible="state != 'new'"/>
+
+                    <button name="action_approve_n1"
+                            type="object"
+                            string="Valider (N+1)"
+                            class="btn-success"
+                            invisible="state != 'n1' or not can_approve_n1"/>
+
+                    <button name="action_close_processing"
+                            type="object"
+                            string="Clôturer (Livrée / Emprunté)"
+                            class="btn-success"
+                            groups="ar_demande_materiel_informatique.group_ar_it_traitement"
+                            invisible="state != 'processing'"/>
+
+                    <button name="action_refuse"
+                            type="object"
+                            string="Refuser"
+                            class="btn-danger"
+                            groups="ar_demande_materiel_informatique.group_ar_it_traitement"
+                            invisible="is_requester or state not in ['new', 'n1', 'processing']"/>
+                </header>
+
+                <sheet class="ar_it_full_width_sheet ar_sortie_caisse_sheet" style="max-width: none; width: calc(100% - 32px);">
+                    <field name="expression_besoin" invisible="True"/>
+                    <field name="state" invisible="True"/>
+
+                    <!-- ========================= -->
+                    <!-- Informations générales -->
+                    <!-- ========================= -->
+                    <div class="ar_sortie_caisse_title">
+                        <div>
+                            <span class="ar_sortie_caisse_label">Demande matériel informatique</span>
+                            <h1>
+                                <field name="name" readonly="True" nolabel="1"/>
+                            </h1>
+                            <div class="ar_it_header_art" aria-hidden="true">
+                                <span class="ar_it_card ar_it_card_back"/>
+                                <span class="ar_it_card ar_it_card_mid"/>
+                                <span class="ar_it_card ar_it_card_front">
+                                    <span/>
+                                    <span/>
+                                </span>
+                                <span class="ar_it_card_shadow"/>
+                            </div>
+                        </div>
+                        <div class="ar_sortie_caisse_amount ar_request_status_box">
+                            <span>Statut actuel</span>
+                            <field name="state" readonly="1" widget="badge" nolabel="1"/>
+                        </div>
+                    </div>
+
+                    <div class="ar_sortie_caisse_main_row">
+                        <group class="ar_sortie_caisse_panel ar_sortie_caisse_identity">
+                            <separator string="Expression de besoin"/>
+                            <field name="expression_besoin" readonly="state != 'new'"/>
+                            <field name="date_besoin"
+                                   readonly="state != 'new'"
+                                   invisible="expression_besoin != 'nouveau'"/>
+                            <field name="date_remplacement"
+                                   readonly="state != 'new'"
+                                   invisible="expression_besoin != 'remplacement'"/>
+                        </group>
+
+                        <group class="ar_sortie_caisse_panel ar_sortie_caisse_description">
+                            <separator string="Informations demandeur"/>
+                            <field name="demandeur_id" readonly="True"/>
+                            <field name="department_id" readonly="True"/>
+                            <field name="manager_n1_id" readonly="True"/>
+                        </group>
+                    </div>
+
+                    <group class="ar_sortie_caisse_panel ar_sortie_caisse_borrow" invisible="expression_besoin != 'emprunter'">
+                        <separator string="Emprunter un matériel"/>
+                        <group col="4">
+                            <field name="periode_from" string="Du" readonly="state != 'new'"/>
+                            <field name="periode_to" string="Au" readonly="state != 'new'"/>
+                        </group>
+                    </group>
+
+                    <!-- ========================= -->
+                    <!-- Tableau -->
+                    <!-- ========================= -->
+                    <separator string="Matériels demandés"/>
+
+                    <div class="ar_sortie_caisse_panel ar_sortie_caisse_lines">
+                        <field name="line_ids" nolabel="1" class="o_full_width" readonly="state != 'new'">
+                            <list editable="bottom" string="Lignes">
+                                <field name="materiel_id"
+                                       string="Matériel"
+                                       options="{'no_create_edit': True}"
+                                       domain="[('is_available','=',True)]"/>
+                                <field name="quantity" string="Qté"/>
+                            </list>
+                        </field>
+                    </div>
+
+                    <!-- ========================= -->
+                    <!-- Informations complémentaires -->
+                    <!-- ========================= -->
+                    <group class="ar_sortie_caisse_panel ar_sortie_caisse_description" string="Informations complémentaires">
+                        <field name="commentaire"
+                               placeholder="Ajouter un commentaire..."
+                               readonly="state in ['delivered', 'borrowed', 'refused']"/>
+
+                        <field name="attachment_ids"
+                               widget="many2many_binary"
+                               readonly="state in ['delivered', 'borrowed', 'refused']"/>
+                    </group>
+
+                </sheet>
+		<chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- Action principale -->
+    <!-- ========================= -->
+    <record id="action_ar_it_demande" model="ir.actions.act_window">
+        <field name="name">Demandes</field>
+        <field name="res_model">ar.it.demande</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('state','in',('new','n1','processing')), ('periode_from','=',False), ('periode_to','=',False)]</field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- Archive Réceptionnée -->
+    <!-- ========================= -->
+    <record id="action_ar_it_archive_received" model="ir.actions.act_window">
+        <field name="name">Archive - Livrée</field>
+        <field name="res_model">ar.it.demande</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('state','=','delivered')]</field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- Archive Refusée -->
+    <!-- ========================= -->
+    <record id="action_ar_it_archive_refused" model="ir.actions.act_window">
+        <field name="name">Archive - Refusée</field>
+        <field name="res_model">ar.it.demande</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('state','=','refused')]</field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- Matériel Emprunté -->
+    <!-- ========================= -->
+    <record id="action_ar_it_materiel_emprunte" model="ir.actions.act_window">
+        <field name="name">Matériel Emprunté</field>
+        <field name="res_model">ar.it.demande</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('periode_from','!=',False), ('periode_to','!=',False)]</field>
+    </record>
+
+</odoo>

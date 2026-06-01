@@ -1,0 +1,73 @@
+<odoo>
+    <!-- ========================= -->
+    <!-- Menu racine -->
+    <!-- ========================= -->
+    <menuitem id="ar_it_menu_root"
+              name="AR Demande matériel informatique"
+              sequence="10"/>
+
+    <!-- ========================= -->
+    <!-- Paramétrage (LIMITÉ AU GROUPE PARAM) -->
+    <!-- ========================= -->
+    <menuitem id="ar_it_menu_param"
+              name="Paramétrage"
+              parent="ar_it_menu_root"
+              sequence="40"
+              groups="ar_demande_materiel_informatique.group_ar_it_param"/>
+
+    <menuitem id="ar_it_menu_materiel"
+              name="Matériel"
+              parent="ar_it_menu_param"
+              action="action_ar_it_materiel"
+              sequence="10"
+              groups="ar_demande_materiel_informatique.group_ar_it_param"/>
+
+    <menuitem id="ar_it_menu_traiteur"
+              name="Personnes qui traite"
+              parent="ar_it_menu_param"
+              action="action_ar_it_traiteur"
+              sequence="20"
+              groups="ar_demande_materiel_informatique.group_ar_it_param"/>
+
+
+    <!-- ========================= -->
+    <!-- Demande  -->
+    <!-- ========================= -->
+    <menuitem id="ar_it_menu_demande"
+              name="Demande"
+              parent="ar_it_menu_root"
+              action="action_ar_it_demande"
+              sequence="10"/>
+
+    <!-- ========================= -->
+    <!-- Archive -->
+    <!-- ========================= -->
+    <menuitem id="ar_it_menu_archive"
+              name="Archive"
+              parent="ar_it_menu_root"
+              sequence="30"/>
+
+    <menuitem id="ar_it_menu_archive_received"
+              name="Livrée"
+              parent="ar_it_menu_archive"
+              action="action_ar_it_archive_received"
+              sequence="10"/>
+
+    <menuitem id="ar_it_menu_archive_refused"
+              name="Refusée"
+              parent="ar_it_menu_archive"
+              action="action_ar_it_archive_refused"
+              sequence="20"/>
+
+    <menuitem id="ar_it_menu_materiel_emprunte"
+          name="Matériel Emprunté"
+          parent="ar_it_menu_root"
+          action="action_ar_it_materiel_emprunte"
+          sequence="31"/>
+
+    <menuitem id="ar_it_menu_documentation"
+          name="Documentation"
+          parent="ar_it_menu_root"
+          action="action_ar_it_documentation"
+          sequence="32"/>
+</odoo>

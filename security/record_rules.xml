@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- ========================================= -->
+        <!-- 1) Demandeur : ne voit que ses demandes
+             (s'applique aux users "normaux", pas aux traiteurs)
+        <!- ========================================= -->
+        <record id="rule_ar_it_demande_demandeur_only" model="ir.rule">
+            <field name="name">AR IT Demande - Demandeur voit ses demandes</field>
+            <field name="model_id" ref="model_ar_it_demande"/>
+            <field name="domain_force">[('demandeur_id.user_id', '=', user.id)]</field>
+
+            <!-- base.group_user mais pas group_ar_it_traitement -->
+            <field name="groups" eval="[(4, ref('ar_demande_materiel_informatique.group_ar_it_demandeur'))]"/>
+        </record>
+
+        <!-- ========================================= -->
+        <!-- 2) Manager N+1 : voit ses demandes + demandes de ses users
+             (s'applique aux users "normaux", pas aux traiteurs)
+        <!- ========================================= -->
+        <record id="rule_ar_it_demande_manager_n1" model="ir.rule">
+            <field name="name">AR IT Demande - Manager N+1 voit ses demandes + subordonnés</field>
+            <field name="model_id" ref="model_ar_it_demande"/>
+            <field name="domain_force">
+                ['|',
+                    ('demandeur_id.user_id', '=', user.id),
+                    ('manager_n1_id.user_id', '=', user.id)
+                ]
+            </field>
+
+            <field name="groups" eval="[(4, ref('ar_demande_materiel_informatique.group_ar_it_manager'))]"/>
+        </record>
+
+        <!-- ========================================= -->
+        <!-- 3) Traiteur : voit tout
+        <!- ========================================= -->
+        <record id="rule_ar_it_demande_traitement_all" model="ir.rule">
+            <field name="name">AR IT Demande - Traiteur voit tout</field>
+            <field name="model_id" ref="model_ar_it_demande"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('ar_demande_materiel_informatique.group_ar_it_traitement'))]"/>
+        </record>
+
+        <record id="rule_ar_it_demande_line_traitement_all" model="ir.rule">
+            <field name="name">AR IT Demande Line - Traiteur voit tout</field>
+            <field name="model_id" ref="model_ar_it_demande_line"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('ar_demande_materiel_informatique.group_ar_it_traitement'))]"/>
+        </record>
+
+    </data>
+</odoo>

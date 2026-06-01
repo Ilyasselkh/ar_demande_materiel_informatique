@@ -1,0 +1,68 @@
+<odoo>
+
+    <!-- ========================= -->
+    <!-- Categorie droits utilisateurs -->
+    <!-- ========================= -->
+    <record id="module_category_ar_it_demande" model="ir.module.category">
+        <field name="name">AR Demande matériel informatique</field>
+        <field name="description">Droits d'accès du module demande matériel informatique</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="privilege_ar_it_param" model="res.groups.privilege">
+        <field name="name">AR IT - Paramétrage</field>
+        <field name="category_id" ref="module_category_ar_it_demande"/>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="privilege_ar_it_traitement" model="res.groups.privilege">
+        <field name="name">AR IT - Traitement</field>
+        <field name="category_id" ref="module_category_ar_it_demande"/>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="privilege_ar_it_manager" model="res.groups.privilege">
+        <field name="name">AR IT - Manager N+1</field>
+        <field name="category_id" ref="module_category_ar_it_demande"/>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="privilege_ar_it_demandeur" model="res.groups.privilege">
+        <field name="name">AR IT - Demandeur</field>
+        <field name="category_id" ref="module_category_ar_it_demande"/>
+        <field name="sequence">40</field>
+    </record>
+
+    <!-- ========================= -->
+    <!-- Groupe Paramétrage -->
+    <!-- ========================= -->
+    <record id="group_ar_it_param" model="res.groups">
+        <field name="name">AR IT - Paramétrage</field>
+        <field name="privilege_id" ref="privilege_ar_it_param"/>
+    </record>
+
+    <!-- ========================= -->
+    <!-- Groupe Traitement -->
+    <!-- ========================= -->
+    <record id="group_ar_it_traitement" model="res.groups">
+        <field name="name">AR IT - Traitement</field>
+        <field name="privilege_id" ref="privilege_ar_it_traitement"/>
+    </record>
+
+    <!-- ========================= -->
+    <!-- Groupe Manager -->
+    <!-- ========================= -->
+    <record id="group_ar_it_manager" model="res.groups">
+        <field name="name">AR IT - Manager N+1</field>
+        <field name="privilege_id" ref="privilege_ar_it_manager"/>
+    </record>
+
+    <!-- ========================= -->
+    <!-- Groupe Demandeur -->
+    <!-- ========================= -->
+    <record id="group_ar_it_demandeur" model="res.groups">
+        <field name="name">AR IT - Demandeur</field>
+        <field name="privilege_id" ref="privilege_ar_it_demandeur"/>
+    </record>
+
+</odoo>

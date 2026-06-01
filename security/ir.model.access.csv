@@ -1,0 +1,21 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+
+access_ar_it_demande_internal,ar.it.demande internal,model_ar_it_demande,base.group_user,1,1,1,0
+access_ar_it_demande_line_internal,ar.it.demande.line internal,model_ar_it_demande_line,base.group_user,1,1,1,0
+
+
+access_ar_it_materiel_param,ar.it.materiel param,model_ar_it_materiel,ar_demande_materiel_informatique.group_ar_it_param,1,1,1,0
+access_ar_it_traiteur_param,ar.it.traiteur param,model_ar_it_traiteur,ar_demande_materiel_informatique.group_ar_it_param,1,1,1,0
+
+access_ar_it_materiel_user_read,ar.it.materiel user read,model_ar_it_materiel,base.group_user,1,0,0,0
+
+
+access_ar_it_demande_traitement,ar.it.demande traitement,model_ar_it_demande,ar_demande_materiel_informatique.group_ar_it_traitement,1,1,1,0
+access_ar_it_demande_line_traitement,ar.it.demande.line traitement,model_ar_it_demande_line,ar_demande_materiel_informatique.group_ar_it_traitement,1,1,1,0
+
+access_ar_it_demande_n1,ar.it.demande n1,model_ar_it_demande,ar_demande_materiel_informatique.group_ar_it_manager,1,1,0,0
+access_ar_it_demande_line_n1,ar.it.demande.line n1,model_ar_it_demande_line,ar_demande_materiel_informatique.group_ar_it_manager,1,1,0,0
+
+access_ar_it_documentation_user_read,ar.it.documentation user read,model_ar_it_documentation,base.group_user,1,0,0,0
+access_ar_it_documentation_traitement,ar.it.documentation traitement,model_ar_it_documentation,ar_demande_materiel_informatique.group_ar_it_traitement,1,1,1,1
