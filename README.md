@@ -1,106 +1,94 @@
-# AR - Demande Mat?riel Informatique
+# AR - Demande Materiel Informatique
 
+Module Odoo de demandes IT pour nouveau besoin, remplacement ou emprunt temporaire, avec validation manager et traitement informatique.
 
-> Documentation du module de demande de mat?riel informatique.
+## Objectif
 
+Cette documentation explique le perimetre fonctionnel du module, les roles utilisateurs, le workflow, la configuration et les principaux objets techniques.
 
-## Vue d?ensemble
+## Utilisateurs concernes
 
-Le module permet de g?rer les demandes IT pour nouveau besoin, remplacement ou emprunt. Il associe la demande au collaborateur, ? son d?partement et ? son manager, puis la transmet au service IT pour traitement, livraison ou suivi d?emprunt.
+- Demandeur
+- Manager N+1
+- Traiteur IT
+- Administrateur Odoo
 
-## Utilisateurs concern?s
-
-- Demandeur : cr?e et soumet la demande.
-- Manager N+1 : approuve ou refuse.
-- Traiteur IT : traite, livre ou marque l?emprunt.
-- Administrateur : maintient catalogue mat?riel et traiteurs.
-
-## Workflow m?tier
+## Workflow metier
 
 1. Nouvelle
 2. Validation N+1
 3. Traitement IT
-4. Emprunt?
-5. Livr?e
-6. Refus?e
+4. Emprunte
+5. Livree
+6. Refusee
 
-## Fonctionnement op?rationnel
+## Fonctionnement operationnel
 
 - Choisir nouveau besoin, remplacement ou emprunt.
-- Renseigner les dates adapt?es au type de besoin.
-- Ajouter les lignes mat?riel.
+- Renseigner les dates adaptees.
+- Ajouter les lignes materiel.
 - Soumettre au manager.
-- Traitement par IT puis livraison ou emprunt.
+- Traiter puis livrer ou marquer comme emprunte.
 
-## Configuration recommand?e
+## Configuration recommandee
 
-- Cr?er le catalogue mat?riel.
-- Cr?er les personnes de traitement IT.
-- V?rifier les employ?s et managers.
-- Configurer groupes, record rules et acc?s.
+- Creer le catalogue materiel.
+- Creer les personnes de traitement IT.
+- Verifier employes et managers.
+- Configurer groupes et record rules.
 
-## D?pendances Odoo
+## Dependances Odoo
 
 - `base`
-- `hr`
 - `mail`
+- `hr`
 - `web`
 
-## Mod?les techniques
+## Modeles principaux
 
-- `ar.it.demande` : Demande matériel informatique (`models/demande.py`)
-- `ar.it.demande.line` : Ligne demande matériel (`models/demande.py`)
-- `ar.it.documentation` : IT - Documentation (`models/documentation.py`)
-- `ar.it.materiel` : Matériel informatique (`models/materiel.py`)
-- `ar.it.traiteur` : Personnes qui traite (`models/traite_person.py`)
+- `ar.it.demande`
+- `ar.it.demande.line`
+- `ar.it.materiel`
+- `ar.it.traiteur`
+- `ar.it.documentation`
 
-## ?tats d?tect?s dans le code
+## Structure importante du module
 
-- `models/demande.py` : `new` (Nouvelle), `n1` (Validation N+1), `processing` (Traitement), `borrowed` (Emprunté), `delivered` (Livrée), `refused` (Refusée)
-
-## Actions serveur principales
-
-- `action_submit_n1` (`models/demande.py`)
-- `action_approve_n1` (`models/demande.py`)
-- `action_close_processing` (`models/demande.py`)
-- `action_refuse` (`models/demande.py`)
-
-## Fichiers charg?s par le manifest
-
-- `security/security.xml`
-- `security/record_rules.xml`
 - `security/ir.model.access.csv`
+- `security/record_rules.xml`
+- `security/security.xml`
 - `data/mail_templates.xml`
-- `views/materiel_views.xml`
-- `views/traite_person_views.xml`
 - `views/demande_views.xml`
 - `views/documentation_views.xml`
+- `views/materiel_views.xml`
 - `views/menus.xml`
+- `views/traite_person_views.xml`
+- `models/__init__.py`
+- `models/demande.py`
+- `models/documentation.py`
+- `models/materiel.py`
+- `models/traite_person.py`
 
-## S?curit? et droits
+## Securite
 
-Le module s?appuie sur les fichiers suivants pour d?finir les groupes, r?gles d?enregistrement et droits d?acc?s :
+Les droits sont geres par les fichiers du dossier `security`. Il faut verifier les groupes, les regles enregistrement et les acces CSV apres installation ou modification du module.
 
-- `security/ir.model.access.csv`
-- `security/record_rules.xml`
-- `security/security.xml`
+## Notifications et suivi
 
-## Assets et interface
+Les modules qui dependent de `mail` utilisent le chatter Odoo pour tracer les changements. Les templates mail presents dans le dossier `data` servent a notifier les acteurs concernes par les transitions.
 
-- `static/src/js/demande_form_animations.js`
-- `static/src/scss/demande_form.scss`
+## Installation
 
-## Bonnes pratiques d?utilisation
-
-- V?rifier que chaque utilisateur Odoo est li? au bon employ? lorsque le module d?pend de `hr.employee`.
-- Tester le workflow avec un dossier de test avant utilisation en production.
-- Contr?ler les groupes de s?curit? apr?s installation afin que seuls les bons r?les voient les boutons de validation.
-- Garder les templates e-mail et rapports align?s avec les proc?dures internes.
-- Sauvegarder la base avant toute modification structurelle du module.
+1. Copier le module dans le dossier addons Odoo.
+2. Redemarrer le serveur Odoo si necessaire.
+3. Mettre a jour la liste des applications.
+4. Installer ou mettre a jour le module.
+5. Verifier les droits utilisateurs et tester un dossier de bout en bout.
 
 ## Maintenance
 
-- Les ?volutions fonctionnelles doivent ?tre ajout?es dans les mod?les Python, les vues XML et les r?gles de s?curit? correspondantes.
-- Apr?s modification des vues, mettre ? jour le module depuis Odoo ou red?marrer le serveur selon le type de changement.
-- Apr?s modification des assets, vider le cache navigateur et recompiler les assets si n?cessaire.
-- Toute nouvelle ?tape de workflow doit ?tre accompagn?e des droits, boutons, notifications et filtres correspondants.
+- Ajouter toute nouvelle etape a la fois dans le modele Python, les vues XML, les droits et les notifications.
+- Tester les workflows avec plusieurs roles utilisateurs.
+- Mettre a jour les rapports et templates mail quand la procedure interne change.
+- Eviter de modifier les donnees de production sans sauvegarde.
+- Documenter toute evolution fonctionnelle dans ce README.
