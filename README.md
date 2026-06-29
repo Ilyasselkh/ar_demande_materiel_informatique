@@ -1,48 +1,136 @@
 # AR - Demande Materiel Informatique
 
-Module Odoo de demandes IT pour nouveau besoin, remplacement ou emprunt temporaire, avec validation manager et traitement informatique.
+Module Odoo de gestion des demandes de materiel informatique.
 
-## Objectif
+Le module couvre les nouveaux besoins, les remplacements et les emprunts temporaires, avec validation Manager N+1 puis traitement par l'equipe IT.
 
-Cette documentation explique le perimetre fonctionnel du module, les roles utilisateurs, le workflow, la configuration et les principaux objets techniques.
+## Objectif fonctionnel
 
-## Utilisateurs concernes
+Centraliser les demandes IT et tracer les validations, traitements, livraisons et emprunts.
 
-- Demandeur
-- Manager N+1
-- Traiteur IT
-- Administrateur Odoo
+Le module permet de :
 
-## Workflow metier
+- creer une demande de materiel informatique ;
+- choisir le type de besoin ;
+- saisir les dates obligatoires selon le type ;
+- ajouter les lignes de materiel ;
+- joindre des pieces justificatives ;
+- soumettre au Manager N+1 ;
+- faire valider ou refuser la demande ;
+- transmettre au traitement IT ;
+- marquer le materiel comme livre ou emprunte ;
+- notifier les acteurs par email.
 
-1. Nouvelle
-2. Validation N+1
-3. Traitement IT
-4. Emprunte
-5. Livree
-6. Refusee
+## Roles fonctionnels
 
-## Fonctionnement operationnel
+### Demandeur
 
-- Choisir nouveau besoin, remplacement ou emprunt.
-- Renseigner les dates adaptees.
-- Ajouter les lignes materiel.
-- Soumettre au manager.
-- Traiter puis livrer ou marquer comme emprunte.
+Le demandeur cree la demande et renseigne le besoin.
 
-## Configuration recommandee
+Il peut :
 
-- Creer le catalogue materiel.
-- Creer les personnes de traitement IT.
-- Verifier employes et managers.
-- Configurer groupes et record rules.
+- creer une demande ;
+- choisir `Nouveau besoin`, `Remplacement` ou `Emprunter` ;
+- saisir la date de besoin, la date de remplacement ou la periode d'emprunt ;
+- ajouter le materiel demande ;
+- joindre des fichiers ;
+- soumettre la demande ;
+- suivre son avancement.
 
-## Dependances Odoo
+### Manager N+1
 
-- `base`
-- `mail`
-- `hr`
-- `web`
+Le Manager N+1 valide ou refuse apres soumission.
+
+Condition importante : l'utilisateur doit etre le Manager N+1 reel du demandeur.
+
+### Traiteur IT
+
+Le traiteur IT intervient apres validation N+1.
+
+Il peut :
+
+- consulter les demandes en traitement ;
+- preparer le materiel ;
+- cloturer en `Livree` ;
+- cloturer en `Emprunte` lorsque le besoin est temporaire ;
+- refuser si le traitement n'est pas possible.
+
+### Administrateur
+
+L'administrateur gere le catalogue materiel, les traiteurs IT, la documentation et les droits.
+
+## Types de demande
+
+Le champ `Expression de besoin` peut prendre les valeurs suivantes :
+
+- `Nouveau besoin`
+- `Remplacement`
+- `Emprunter`
+
+Regles de saisie :
+
+- pour `Nouveau besoin`, la date de besoin est obligatoire ;
+- pour `Remplacement`, la date de remplacement est obligatoire ;
+- pour `Emprunter`, les dates `Du` et `Au` sont obligatoires ;
+- la date `Au` doit etre superieure ou egale a la date `Du`.
+
+## Etats du workflow
+
+Les etats principaux sont :
+
+- `Nouvelle`
+- `Validation N+1`
+- `Traitement`
+- `Emprunte`
+- `Livree`
+- `Refusee`
+
+## Flux standard
+
+1. `Nouvelle`
+2. `Validation N+1`
+3. `Traitement`
+4. `Livree` ou `Emprunte`
+
+Un refus peut intervenir a l'etape Manager N+1 ou traitement IT.
+
+## Donnees de reference
+
+Le module utilise :
+
+- un catalogue de materiels ;
+- un referentiel des traiteurs IT ;
+- une documentation interne.
+
+## Notifications
+
+Les templates email couvrent notamment :
+
+- nouvelle demande vers Manager N+1 ;
+- demande approuvee vers demandeur ;
+- demande en traitement vers traiteurs IT ;
+- demande livree vers demandeur ;
+- demande empruntee vers demandeur ;
+- demande refusee vers demandeur.
+
+Fichier principal :
+
+- `data/mail_templates.xml`
+
+## Securite et droits
+
+Les droits sont definis dans :
+
+- `security/security.xml`
+- `security/record_rules.xml`
+- `security/ir.model.access.csv`
+
+Points de controle :
+
+- seul le demandeur cree et soumet sa demande ;
+- seul le Manager N+1 valide l'etape N+1 ;
+- seuls les traiteurs IT autorises traitent les demandes ;
+- les contraintes de dates sont appliquees cote serveur.
 
 ## Modeles principaux
 
@@ -52,43 +140,42 @@ Cette documentation explique le perimetre fonctionnel du module, les roles utili
 - `ar.it.traiteur`
 - `ar.it.documentation`
 
-## Structure importante du module
+## Structure du module
 
-- `security/ir.model.access.csv`
-- `security/record_rules.xml`
 - `security/security.xml`
+- `security/record_rules.xml`
+- `security/ir.model.access.csv`
 - `data/mail_templates.xml`
+- `views/materiel_views.xml`
+- `views/traite_person_views.xml`
 - `views/demande_views.xml`
 - `views/documentation_views.xml`
-- `views/materiel_views.xml`
 - `views/menus.xml`
-- `views/traite_person_views.xml`
-- `models/__init__.py`
 - `models/demande.py`
-- `models/documentation.py`
 - `models/materiel.py`
 - `models/traite_person.py`
-
-## Securite
-
-Les droits sont geres par les fichiers du dossier `security`. Il faut verifier les groupes, les regles enregistrement et les acces CSV apres installation ou modification du module.
-
-## Notifications et suivi
-
-Les modules qui dependent de `mail` utilisent le chatter Odoo pour tracer les changements. Les templates mail presents dans le dossier `data` servent a notifier les acteurs concernes par les transitions.
+- `models/documentation.py`
+- `static/src/scss/demande_form.scss`
+- `static/src/js/demande_form_animations.js`
 
 ## Installation
 
 1. Copier le module dans le dossier addons Odoo.
 2. Redemarrer le serveur Odoo si necessaire.
 3. Mettre a jour la liste des applications.
-4. Installer ou mettre a jour le module.
-5. Verifier les droits utilisateurs et tester un dossier de bout en bout.
+4. Installer le module.
+5. Creer le catalogue materiel.
+6. Declarer les traiteurs IT.
+7. Verifier les managers dans les fiches employes.
+8. Tester un flux `Nouveau besoin`, `Remplacement` et `Emprunter`.
 
-## Maintenance
+## Maintenance fonctionnelle
 
-- Ajouter toute nouvelle etape a la fois dans le modele Python, les vues XML, les droits et les notifications.
-- Tester les workflows avec plusieurs roles utilisateurs.
-- Mettre a jour les rapports et templates mail quand la procedure interne change.
-- Eviter de modifier les donnees de production sans sauvegarde.
-- Documenter toute evolution fonctionnelle dans ce README.
+Lorsqu'un type de demande ou une regle de date change, verifier aussi :
+
+- les contraintes Python ;
+- les champs visibles dans les vues ;
+- les boutons de workflow ;
+- les templates email ;
+- les record rules ;
+- ce README.
