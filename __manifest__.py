@@ -11,6 +11,7 @@
     "data/mail_templates.xml",
     "views/materiel_views.xml",
     "views/traite_person_views.xml",
+    "views/demande_confirm_wizard_views.xml",
     "views/demande_views.xml",
     "views/documentation_views.xml",
     "views/menus.xml",

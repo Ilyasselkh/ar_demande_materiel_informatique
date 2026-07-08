@@ -12,6 +12,7 @@ class ARITDemande(models.Model):
         [
             ("new", "Nouvelle"),
             ("n1", "Validation N+1"),
+            ("manager_it", "Validation Manager IT"),
             ("processing", "Traitement"),
             ("borrowed", "Emprunté"),
             ("delivered", "Livrée"),
@@ -115,6 +116,8 @@ class ARITDemande(models.Model):
 
     commentaire = fields.Text(string="Commentaire", tracking=True)
 
+    refusal_reason = fields.Text(string="Motif de refus", readonly=True, tracking=True)
+
     attachment_ids = fields.Many2many(
         "ir.attachment",
         "ar_it_demande_ir_attachment_rel",
@@ -127,6 +130,11 @@ class ARITDemande(models.Model):
     can_approve_n1 = fields.Boolean(
         string="Peut valider N+1",
         compute="_compute_can_approve_n1",
+    )
+
+    can_approve_manager_it = fields.Boolean(
+        string="Peut valider Manager IT",
+        compute="_compute_can_approve_manager_it",
     )
     
     is_requester = fields.Boolean(
@@ -147,6 +155,11 @@ class ARITDemande(models.Model):
                 and rec.manager_n1_id.user_id
                 and rec.manager_n1_id.user_id.id == user.id
             )
+
+    def _compute_can_approve_manager_it(self):
+        can_approve = self.env.user.has_group("ar_demande_materiel_informatique.group_ar_it_manager_it")
+        for rec in self:
+            rec.can_approve_manager_it = can_approve
     
     # =========================
     # EMAILS WORKFLOW
@@ -162,10 +175,19 @@ class ARITDemande(models.Model):
             return False
         emp = emp.sudo()
         user = emp.user_id
-        email = False
+        emails = []
         if user:
-            email = user.partner_id.email or user.email
-        return self._clean_header(email) if email else False
+            emails += [user.partner_id.email, user.email]
+
+        for field_name in ("work_email", "private_email", "email"):
+            if field_name in emp._fields:
+                emails.append(emp[field_name])
+
+        for email in emails:
+            email = self._clean_header(email)
+            if email:
+                return email
+        return False
 
     def _get_demandeur_email(self):
         self.ensure_one()
@@ -186,16 +208,44 @@ class ARITDemande(models.Model):
                 emails.add(email)
         return list(emails)
 
-    def _send_template(self, xmlid, email_to_list):
+    def _get_manager_it_emails(self):
+        """Emails des utilisateurs qui ont le groupe Manager IT."""
+        self.ensure_one()
+        group_xmlid = "ar_demande_materiel_informatique.group_ar_it_manager_it"
+        group = self.env.ref(group_xmlid, raise_if_not_found=False)
+        emails = set()
+
+        if group:
+            for field_name in ("users", "user_ids"):
+                if field_name in group._fields:
+                    for user in group.sudo()[field_name]:
+                        email = self._clean_header(user.partner_id.email or user.email)
+                        if email:
+                            emails.add(email)
+
+        users = self.env["res.users"].sudo().search([("active", "=", True)])
+        for user in users:
+            if not user.has_group(group_xmlid) and not user.with_user(user).has_group(group_xmlid):
+                continue
+            email = user.partner_id.email or user.email
+            email = self._clean_header(email)
+            if email:
+                emails.add(email)
+        return list(emails)
+
+    def _send_template(self, xmlid, email_to_list, missing_recipient_message=False):
         """Envoi mail template à une liste d'emails."""
         self.ensure_one()
         template = self.env.ref(xmlid, raise_if_not_found=False)
         if not template:
+            self.message_post(body=_("Template email introuvable : %s.") % xmlid)
             return
 
         recipients = [self._clean_header(e) for e in (email_to_list or [])]
         recipients = [e for e in recipients if e]
         if not recipients:
+            if missing_recipient_message:
+                self.message_post(body=missing_recipient_message)
             return
 
         email_values = {
@@ -213,15 +263,25 @@ class ARITDemande(models.Model):
             self._send_template(
                 "ar_demande_materiel_informatique.mail_template_it_new_to_manager",
                 [self._get_manager_n1_email()],
+                _("Aucun email trouve pour le Manager N+1. Verifiez l'utilisateur ou l'email professionnel de l'employe manager."),
             )
             return
 
-        # 2) Validation N+1 => (n1 -> processing)
-        if old_state == "n1" and new_state == "processing":
+        # 2) Validation N+1 => mail au Manager IT
+        if old_state == "n1" and new_state == "manager_it":
+            self._send_template(
+                "ar_demande_materiel_informatique.mail_template_it_to_manager_it",
+                self._get_manager_it_emails(),
+                _("Aucun email trouve pour le Manager IT. Verifiez qu'un utilisateur actif a le groupe AR IT - Manager IT et une adresse email."),
+            )
+            return
+
+        # 3) Validation finale => traitement
+        if old_state in ("n1", "manager_it") and new_state == "processing":
             # 2.1 notifier demandeur (validée)
             self._send_template(
                 "ar_demande_materiel_informatique.mail_template_it_approved_to_demandeur",
-                [self._get_demandeur_email()],
+                [self._get_demandeur_email(), self._get_manager_n1_email()],
             )
             # 2.2 notifier traiteurs (à traiter)
             self._send_template(
@@ -234,7 +294,7 @@ class ARITDemande(models.Model):
         if new_state == "delivered":
             self._send_template(
                 "ar_demande_materiel_informatique.mail_template_it_delivered_to_demandeur",
-                [self._get_demandeur_email()],
+                [self._get_demandeur_email(), self._get_manager_n1_email()],
             )
             return
 
@@ -242,7 +302,7 @@ class ARITDemande(models.Model):
         if new_state == "borrowed":
             self._send_template(
                 "ar_demande_materiel_informatique.mail_template_it_borrowed_to_demandeur",
-                [self._get_demandeur_email()],
+                [self._get_demandeur_email(), self._get_manager_n1_email()],
             )
             return
 
@@ -250,7 +310,7 @@ class ARITDemande(models.Model):
         if new_state == "refused":
             self._send_template(
                 "ar_demande_materiel_informatique.mail_template_it_refused_to_demandeur",
-                [self._get_demandeur_email()],
+                [self._get_demandeur_email(), self._get_manager_n1_email()],
             )
             return
 
@@ -262,11 +322,14 @@ class ARITDemande(models.Model):
         state_labels = dict(self._fields["state"].selection)
         messages = {
             ("new", "n1"): _("Demande soumise par %s. Demande transmise a Validation N+1."),
-            ("n1", "processing"): _("Validation N+1 effectuee par %s. Demande transmise au traitement."),
+            ("n1", "processing"): _("Validation N+1 et Manager IT effectuee par %s. Demande transmise au traitement."),
+            ("n1", "manager_it"): _("Validation N+1 effectuee par %s. Demande transmise au Manager IT."),
+            ("manager_it", "processing"): _("Validation Manager IT effectuee par %s. Demande transmise au traitement."),
             ("processing", "delivered"): _("Traitement cloture par %s. Materiel livre."),
             ("processing", "borrowed"): _("Traitement cloture par %s. Materiel marque comme emprunte."),
             ("new", "refused"): _("Demande refusee par %s."),
             ("n1", "refused"): _("Demande refusee par %s."),
+            ("manager_it", "refused"): _("Demande refusee par %s."),
             ("processing", "refused"): _("Demande refusee par %s."),
         }
         body = messages.get((old_state, new_state))
@@ -328,7 +391,66 @@ class ARITDemande(models.Model):
                     raise ValidationError(_("La quantité doit être supérieure à 0."))
 
     # --- Actions workflow ---
+    def _open_confirm_wizard(self, action_key):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Confirmation"),
+            "res_model": "ar.it.demande.confirm.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {
+                "default_demande_id": self.id,
+                "default_action_key": action_key,
+            },
+        }
+
     def action_submit_n1(self):
+        self.ensure_one()
+        return self._open_confirm_wizard("submit_n1")
+
+    def action_approve_n1(self):
+        self.ensure_one()
+        return self._open_confirm_wizard("approve_n1")
+
+    def action_approve_manager_it(self):
+        self.ensure_one()
+        return self._open_confirm_wizard("approve_manager_it")
+
+    def action_refuse_manager_it(self):
+        self.ensure_one()
+        return self._open_confirm_wizard("refuse_manager_it")
+
+    def action_close_processing(self):
+        self.ensure_one()
+        return self._open_confirm_wizard("close_processing")
+
+    def action_refuse(self):
+        self.ensure_one()
+        return self._open_confirm_wizard("refuse")
+
+    def _execute_confirmed_workflow(self, action_key, refusal_reason=False):
+        self.ensure_one()
+        if action_key in ("refuse_manager_it", "refuse"):
+            refusal_reason = str(refusal_reason or "").strip()
+            if not refusal_reason:
+                raise ValidationError(_("Veuillez renseigner le motif de refus."))
+            self.refusal_reason = refusal_reason
+
+        action_map = {
+            "submit_n1": self._confirm_submit_n1,
+            "approve_n1": self._confirm_approve_n1,
+            "approve_manager_it": self._confirm_approve_manager_it,
+            "refuse_manager_it": self._confirm_refuse_manager_it,
+            "close_processing": self._confirm_close_processing,
+            "refuse": self._confirm_refuse,
+        }
+        action = action_map.get(action_key)
+        if not action:
+            raise ValidationError(_("Action de confirmation inconnue."))
+        return action()
+
+    def _confirm_submit_n1(self):
         for rec in self:
             if rec.state != "new":
                 continue
@@ -343,7 +465,7 @@ class ARITDemande(models.Model):
 
             rec.state = "n1"
 
-    def action_approve_n1(self):
+    def _confirm_approve_n1(self):
         for rec in self:
             if rec.state != "n1":
                 continue
@@ -356,13 +478,34 @@ class ARITDemande(models.Model):
             ):
                 raise ValidationError(_("Vous n'êtes pas autorisé à valider cette demande (N+1)."))
 
+            if self.env.user.has_group("ar_demande_materiel_informatique.group_ar_it_manager_it"):
+                rec.state = "processing"
+            else:
+                rec.state = "manager_it"
+
+    def _check_manager_it_group(self):
+        if not self.env.user.has_group("ar_demande_materiel_informatique.group_ar_it_manager_it"):
+            raise ValidationError(_("Vous n'avez pas l'accès Manager IT."))
+
+    def _confirm_approve_manager_it(self):
+        self._check_manager_it_group()
+        for rec in self:
+            if rec.state != "manager_it":
+                continue
             rec.state = "processing"
+
+    def _confirm_refuse_manager_it(self):
+        self._check_manager_it_group()
+        for rec in self:
+            if rec.state != "manager_it":
+                continue
+            rec.state = "refused"
 
     def _check_traitement_group(self):
         if not self.env.user.has_group("ar_demande_materiel_informatique.group_ar_it_traitement"):
             raise ValidationError(_("Vous n'avez pas l'accès au traitement."))
 
-    def action_close_processing(self):
+    def _confirm_close_processing(self):
         self._check_traitement_group()
         for rec in self:
             if rec.state != "processing":
@@ -374,11 +517,11 @@ class ARITDemande(models.Model):
             else:
                 rec.state = "delivered"
 
-    def action_refuse(self):
+    def _confirm_refuse(self):
         # Refuser est réservé au groupe Traitement
         self._check_traitement_group()
         for rec in self:
-            if rec.state in ("received", "refused"):
+            if rec.state not in ("new", "n1", "processing"):
                 continue
             rec.state = "refused"
 

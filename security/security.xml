@@ -21,6 +21,12 @@
         <field name="sequence">20</field>
     </record>
 
+    <record id="privilege_ar_it_manager_it" model="res.groups.privilege">
+        <field name="name">AR IT - Manager IT</field>
+        <field name="category_id" ref="module_category_ar_it_demande"/>
+        <field name="sequence">25</field>
+    </record>
+
     <record id="privilege_ar_it_manager" model="res.groups.privilege">
         <field name="name">AR IT - Manager N+1</field>
         <field name="category_id" ref="module_category_ar_it_demande"/>
@@ -47,6 +53,14 @@
     <record id="group_ar_it_traitement" model="res.groups">
         <field name="name">AR IT - Traitement</field>
         <field name="privilege_id" ref="privilege_ar_it_traitement"/>
+    </record>
+
+    <!-- ========================= -->
+    <!-- Groupe Manager IT -->
+    <!-- ========================= -->
+    <record id="group_ar_it_manager_it" model="res.groups">
+        <field name="name">AR IT - Manager IT</field>
+        <field name="privilege_id" ref="privilege_ar_it_manager_it"/>
     </record>
 
     <!-- ========================= -->

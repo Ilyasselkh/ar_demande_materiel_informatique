@@ -93,8 +93,9 @@
             <form string="Demande matériel informatique" class="ar_it_full_width_form ar_it_demande_form">
 
                 <header>
-                    <field name="state" widget="statusbar" statusbar_visible="new,n1,processing,borrowed,delivered,refused"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,n1,manager_it,processing,borrowed,delivered,refused"/>
                     <field name="can_approve_n1" invisible="True"/>
+                    <field name="can_approve_manager_it" invisible="True"/>
                     <field name="is_requester" invisible="True"/>
 
                     <button name="action_submit_n1"
@@ -108,6 +109,20 @@
                             string="Valider (N+1)"
                             class="btn-success"
                             invisible="state != 'n1' or not can_approve_n1"/>
+
+                    <button name="action_approve_manager_it"
+                            type="object"
+                            string="Valider"
+                            class="btn-success"
+                            groups="ar_demande_materiel_informatique.group_ar_it_manager_it"
+                            invisible="state != 'manager_it' or not can_approve_manager_it"/>
+
+                    <button name="action_refuse_manager_it"
+                            type="object"
+                            string="Refuser"
+                            class="btn-danger"
+                            groups="ar_demande_materiel_informatique.group_ar_it_manager_it"
+                            invisible="state != 'manager_it' or not can_approve_manager_it"/>
 
                     <button name="action_close_processing"
                             type="object"
@@ -137,15 +152,6 @@
                             <h1>
                                 <field name="name" readonly="True" nolabel="1"/>
                             </h1>
-                            <div class="ar_it_header_art" aria-hidden="true">
-                                <span class="ar_it_card ar_it_card_back"/>
-                                <span class="ar_it_card ar_it_card_mid"/>
-                                <span class="ar_it_card ar_it_card_front">
-                                    <span/>
-                                    <span/>
-                                </span>
-                                <span class="ar_it_card_shadow"/>
-                            </div>
                         </div>
                         <div class="ar_sortie_caisse_amount ar_request_status_box">
                             <span>Statut actuel</span>
@@ -206,6 +212,10 @@
                                placeholder="Ajouter un commentaire..."
                                readonly="state in ['delivered', 'borrowed', 'refused']"/>
 
+                        <field name="refusal_reason"
+                               readonly="1"
+                               invisible="not refusal_reason"/>
+
                         <field name="attachment_ids"
                                widget="many2many_binary"
                                readonly="state in ['delivered', 'borrowed', 'refused']"/>
@@ -224,7 +234,7 @@
         <field name="name">Demandes</field>
         <field name="res_model">ar.it.demande</field>
         <field name="view_mode">list,kanban,form</field>
-        <field name="domain">[('state','in',('new','n1','processing')), ('periode_from','=',False), ('periode_to','=',False)]</field>
+        <field name="domain">[('state','in',('new','n1','manager_it','processing')), ('periode_from','=',False), ('periode_to','=',False)]</field>
     </record>
 
     <!-- ========================= -->

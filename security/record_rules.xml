@@ -15,6 +15,13 @@
             <field name="groups" eval="[(4, ref('ar_demande_materiel_informatique.group_ar_it_demandeur'))]"/>
         </record>
 
+        <record id="rule_ar_it_demande_line_demandeur_only" model="ir.rule">
+            <field name="name">AR IT Demande Line - Demandeur voit ses lignes</field>
+            <field name="model_id" ref="model_ar_it_demande_line"/>
+            <field name="domain_force">[('demande_id.demandeur_id.user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('ar_demande_materiel_informatique.group_ar_it_demandeur'))]"/>
+        </record>
+
         <!-- ========================================= -->
         <!-- 2) Manager N+1 : voit ses demandes + demandes de ses users
              (s'applique aux users "normaux", pas aux traiteurs)
@@ -29,6 +36,18 @@
                 ]
             </field>
 
+            <field name="groups" eval="[(4, ref('ar_demande_materiel_informatique.group_ar_it_manager'))]"/>
+        </record>
+
+        <record id="rule_ar_it_demande_line_manager_n1" model="ir.rule">
+            <field name="name">AR IT Demande Line - Manager N+1 voit ses lignes + subordonnes</field>
+            <field name="model_id" ref="model_ar_it_demande_line"/>
+            <field name="domain_force">
+                ['|',
+                    ('demande_id.demandeur_id.user_id', '=', user.id),
+                    ('demande_id.manager_n1_id.user_id', '=', user.id)
+                ]
+            </field>
             <field name="groups" eval="[(4, ref('ar_demande_materiel_informatique.group_ar_it_manager'))]"/>
         </record>
 
@@ -47,6 +66,23 @@
             <field name="model_id" ref="model_ar_it_demande_line"/>
             <field name="domain_force">[(1,'=',1)]</field>
             <field name="groups" eval="[(4, ref('ar_demande_materiel_informatique.group_ar_it_traitement'))]"/>
+        </record>
+
+        <!-- ========================================= -->
+        <!-- 4) Manager IT : voit tout pour valider/refuser
+        <!- ========================================= -->
+        <record id="rule_ar_it_demande_manager_it_all" model="ir.rule">
+            <field name="name">AR IT Demande - Manager IT voit tout</field>
+            <field name="model_id" ref="model_ar_it_demande"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('ar_demande_materiel_informatique.group_ar_it_manager_it'))]"/>
+        </record>
+
+        <record id="rule_ar_it_demande_line_manager_it_all" model="ir.rule">
+            <field name="name">AR IT Demande Line - Manager IT voit tout</field>
+            <field name="model_id" ref="model_ar_it_demande_line"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('ar_demande_materiel_informatique.group_ar_it_manager_it'))]"/>
         </record>
 
     </data>

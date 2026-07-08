@@ -69,10 +69,6 @@
         overflow: visible;
     }
 
-    .ar_sortie_caisse_sheet.ar_sc_ready {
-        animation: arScSheetIn 420ms ease-out both;
-    }
-
     .ar_sortie_caisse_sheet::before {
         content: "";
         position: absolute;
@@ -93,14 +89,6 @@
         perspective: 900px;
     }
 
-    .ar_sortie_caisse_title.ar_sc_reveal,
-    .ar_sortie_caisse_panel.ar_sc_reveal {
-        animation: arScFadeUp 460ms ease-out both;
-    }
-
-    .ar_sortie_caisse_panel.ar_sc_reveal:nth-of-type(2) { animation-delay: 70ms; }
-    .ar_sortie_caisse_panel.ar_sc_reveal:nth-of-type(3) { animation-delay: 130ms; }
-
     .ar_sortie_caisse_title > div:first-child {
         position: relative;
         min-height: 92px;
@@ -114,7 +102,6 @@
         box-shadow: 0 18px 38px rgba(23, 32, 51, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.88);
         overflow: hidden;
         transform: translateZ(0);
-        transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
     }
 
     .ar_sortie_caisse_title > div:first-child::before,
@@ -126,7 +113,6 @@
         background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.5) 34%, transparent 68%);
         opacity: 0.7;
         transform: translateX(-120%);
-        animation: arScHeaderSweep 4.8s ease-in-out infinite;
         pointer-events: none;
     }
 
@@ -140,14 +126,12 @@
         border-radius: 999px;
         background: rgba(20, 184, 166, 0.11);
         filter: blur(1px);
-        animation: arScOrbDrift 7s ease-in-out infinite;
         pointer-events: none;
     }
 
     .ar_sortie_caisse_title > div:first-child:hover {
         border-color: rgba(37, 99, 235, 0.28);
         box-shadow: 0 24px 48px rgba(23, 32, 51, 0.11), 0 0 0 4px rgba(20, 184, 166, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-        transform: translateY(-3px) rotateX(1deg);
     }
 
     .ar_sortie_caisse_label {
@@ -166,7 +150,6 @@
         font-weight: 700;
         text-transform: uppercase;
         box-shadow: 0 6px 16px rgba(15, 118, 110, 0.1);
-        animation: arScBadgeGlow 3.8s ease-in-out infinite;
     }
 
     .ar_sortie_caisse_title h1 {
@@ -179,105 +162,6 @@
         line-height: 1.15;
         letter-spacing: 0;
         text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
-    }
-
-    .ar_it_header_art {
-        position: absolute;
-        z-index: 1;
-        top: 4px;
-        right: 28px;
-        width: 170px;
-        height: 84px;
-        pointer-events: none;
-        transform: translateZ(0);
-        animation: arItHeaderFloat 4.6s ease-in-out infinite;
-    }
-
-    .ar_it_card,
-    .ar_it_card_shadow {
-        position: absolute;
-        display: block;
-    }
-
-    .ar_it_card {
-        border-radius: 7px;
-        box-shadow: 0 14px 24px rgba(23, 32, 51, 0.14);
-        transform-origin: 50% 60%;
-    }
-
-    .ar_it_card_back {
-        left: 30px;
-        top: 30px;
-        width: 108px;
-        height: 28px;
-        background: linear-gradient(105deg, #ffffff 0%, #e9f3fb 55%, #ffffff 100%);
-        border: 1px solid rgba(188, 209, 229, 0.8);
-        transform: rotate(-10deg);
-        animation: arItBackCardDrift 5.2s ease-in-out infinite;
-    }
-
-    .ar_it_card_mid {
-        left: 36px;
-        top: 18px;
-        width: 112px;
-        height: 32px;
-        background: linear-gradient(105deg, #dff2fb 0%, #ffffff 46%, #d9e7f5 100%);
-        border: 1px solid rgba(176, 206, 231, 0.9);
-        transform: rotate(-14deg);
-        animation: arItMidCardDrift 5.2s ease-in-out infinite;
-    }
-
-    .ar_it_card_front {
-        left: 48px;
-        top: 2px;
-        width: 118px;
-        height: 42px;
-        overflow: hidden;
-        background:
-            linear-gradient(90deg, rgba(255, 255, 255, 0.18) 0 18%, transparent 18% 26%, rgba(255, 255, 255, 0.24) 26% 38%, transparent 38%),
-            linear-gradient(105deg, #0f766e 0%, #2563eb 68%, #3151c9 100%);
-        transform: rotate(-10deg);
-        animation: arItFrontCardDrift 5.2s ease-in-out infinite;
-    }
-
-    .ar_it_card_front::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.34) 42%, transparent 70%);
-        opacity: 0;
-        transform: translateX(-120%);
-        animation: arItCardShine 3.8s ease-in-out infinite;
-    }
-
-    .ar_it_card_front > span:first-child {
-        position: absolute;
-        left: 16px;
-        top: 0;
-        width: 14px;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.32);
-    }
-
-    .ar_it_card_front > span:last-child {
-        position: absolute;
-        right: 8px;
-        top: -8px;
-        width: 28px;
-        height: 52px;
-        border-left: 4px solid rgba(255, 255, 255, 0.7);
-        transform: rotate(-8deg);
-    }
-
-    .ar_it_card_shadow {
-        left: 30px;
-        bottom: 2px;
-        width: 118px;
-        height: 16px;
-        border-radius: 50%;
-        background: radial-gradient(ellipse, rgba(23, 32, 51, 0.2), rgba(23, 32, 51, 0));
-        filter: blur(5px);
-        animation: arItCardShadow 4.6s ease-in-out infinite;
     }
 
     .ar_sortie_caisse_amount {
@@ -296,9 +180,7 @@
         text-align: center;
         box-shadow: 0 18px 34px rgba(15, 118, 110, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.14) inset, inset 0 1px 0 rgba(255, 255, 255, 0.18);
         overflow: hidden;
-        animation: arScAmountGradient 6s ease-in-out infinite, arScAmountFloat 4.5s ease-in-out infinite;
         transform: translateZ(0);
-        transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
     }
 
     .ar_sortie_caisse_amount::after {
@@ -310,18 +192,12 @@
         height: 92px;
         border: 1px solid rgba(255, 255, 255, 0.25);
         border-radius: 999px;
-        animation: arScRingSpin 9s linear infinite;
         pointer-events: none;
     }
 
     .ar_sortie_caisse_amount:hover {
         border-color: rgba(147, 197, 253, 0.75);
         box-shadow: 0 25px 48px rgba(15, 118, 110, 0.26), 0 0 0 4px rgba(37, 99, 235, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.22);
-        transform: translateY(-4px) scale(1.01);
-    }
-
-    .ar_sortie_caisse_amount.ar_sc_amount_flash {
-        animation: arScAmountFlash 760ms ease-out both;
     }
 
     .ar_sortie_caisse_amount > span {
@@ -513,6 +389,7 @@
     .ar_request_card:hover { transform: translateY(-2px); box-shadow: 0 18px 42px rgba(22, 33, 44, 0.14); }
     .ar_card_topline { height: 5px; background: #176b74; }
     .ar_state_n1 .ar_card_topline,
+    .ar_state_manager_it .ar_card_topline,
     .ar_state_processing .ar_card_topline { background: #b77a23; }
     .ar_state_delivered .ar_card_topline,
     .ar_state_borrowed .ar_card_topline { background: #3f7d58; }
@@ -559,88 +436,43 @@
     min-width: 0 !important;
 }
 
-@keyframes arScSheetIn {
-    from { opacity: 0; transform: translateY(10px) scale(0.995); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-}
+.o_form_view.ar_it_confirm_wizard {
+    .ar_confirm_box {
+        min-height: 145px;
+        margin: 14px 0 22px;
+        padding: 24px 28px;
+        border: 1px solid #d9e2ec;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #eef8f6 0%, #f4f7ff 100%);
+        text-align: center;
+    }
 
-@keyframes arScFadeUp {
-    from { opacity: 0; transform: translateY(14px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+    .ar_confirm_icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        margin-bottom: 10px;
+        border-radius: 999px;
+        background: #0ea85f;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 900;
+    }
 
-@keyframes arScAmountFlash {
-    0% { box-shadow: 0 14px 28px rgba(15, 118, 110, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.18); }
-    35% { box-shadow: 0 18px 36px rgba(37, 99, 235, 0.26), 0 0 0 4px rgba(37, 99, 235, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.18); }
-    100% { box-shadow: 0 14px 28px rgba(15, 118, 110, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.18); }
-}
+    .ar_confirm_box h2 {
+        margin: 0 0 6px;
+        color: #07142f;
+        font-size: 18px;
+        font-weight: 900;
+    }
 
-@keyframes arScHeaderSweep {
-    0%, 58% { opacity: 0; transform: translateX(-120%); }
-    68% { opacity: 0.7; }
-    100% { opacity: 0; transform: translateX(120%); }
-}
-
-@keyframes arScOrbDrift {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(-16px, -8px) scale(1.08); }
-}
-
-@keyframes arScBadgeGlow {
-    0%, 100% { background-position: 0% 50%; box-shadow: 0 6px 16px rgba(15, 118, 110, 0.1); }
-    50% { background-position: 100% 50%; box-shadow: 0 8px 22px rgba(37, 99, 235, 0.14); }
-}
-
-@keyframes arScAmountGradient {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-}
-
-@keyframes arScAmountFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-3px); }
-}
-
-@keyframes arScRingSpin {
-    from { transform: rotate(0deg) scale(1); }
-    to { transform: rotate(360deg) scale(1.05); }
-}
-
-@keyframes arItHeaderFloat {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-7px) rotate(1deg); }
-}
-
-@keyframes arItBackCardDrift {
-    0%, 100% { transform: translate(0, 0) rotate(-10deg); }
-    50% { transform: translate(-5px, 5px) rotate(-13deg); }
-}
-
-@keyframes arItMidCardDrift {
-    0%, 100% { transform: translate(0, 0) rotate(-14deg); }
-    50% { transform: translate(3px, 4px) rotate(-11deg); }
-}
-
-@keyframes arItFrontCardDrift {
-    0%, 100% { transform: translate(0, 0) rotate(-10deg); }
-    50% { transform: translate(4px, -3px) rotate(-7deg); }
-}
-
-@keyframes arItCardShine {
-    0%, 48% { opacity: 0; transform: translateX(-120%); }
-    62% { opacity: 1; }
-    100% { opacity: 0; transform: translateX(120%); }
-}
-
-@keyframes arItCardShadow {
-    0%, 100% { opacity: 0.66; transform: scaleX(1); }
-    50% { opacity: 0.4; transform: scaleX(0.78); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .o_form_view.ar_it_demande_form * {
-        animation-duration: 1ms !important;
-        transition-duration: 1ms !important;
+    .ar_confirm_box p {
+        margin: 0;
+        color: #26364f;
+        font-size: 13px;
+        font-weight: 700;
     }
 }
 
@@ -677,15 +509,6 @@
 
         .ar_sortie_caisse_title > div:first-child {
             padding-right: 20px;
-        }
-
-        .ar_it_header_art {
-            position: relative;
-            top: auto;
-            right: auto;
-            margin: 14px 0 -4px auto;
-            width: 150px;
-            height: 74px;
         }
 
         .ar_sortie_caisse_amount {

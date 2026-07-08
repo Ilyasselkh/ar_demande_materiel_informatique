@@ -66,11 +66,11 @@
         </record>
 
 
-        <!-- 2) N+1 valide -> Demandeur -->
-        <record id="mail_template_it_approved_to_demandeur" model="mail.template">
-            <field name="name">IT - Demande validée (Demandeur)</field>
+        <!-- 2) N+1 valide -> Manager IT -->
+        <record id="mail_template_it_to_manager_it" model="mail.template">
+            <field name="name">IT - Validation Manager IT requise</field>
             <field name="model_id" ref="model_ar_it_demande"/>
-            <field name="subject">[Demande IT] {{ object.name }} - Validée par votre manager</field>
+            <field name="subject">[Demande IT] {{ object.name }} - Validation Manager IT requise</field>
             <field name="email_from">MI Workflow &lt;DM-ARMaroc@araymond.com&gt;</field>
             <field name="email_to"></field>
 
@@ -78,7 +78,64 @@
                 <div>
                     <p>Bonjour,</p>
                     <p>
-                        Votre demande <strong><t t-out="object.name"/></strong> a été <strong>validée</strong> par votre manager N+1.
+                        Une demande de materiel informatique a ete validee par le Manager N+1 et necessite maintenant votre validation Manager IT.
+                    </p>
+
+                    <p>
+                        <strong>Reference :</strong> <t t-out="object.name"/><br/>
+                        <strong>Demandeur :</strong> <t t-out="object.demandeur_id.name or ''"/><br/>
+                        <strong>Departement :</strong> <t t-out="object.department_id.name or ''"/><br/>
+                        <strong>Manager N+1 :</strong> <t t-out="object.manager_n1_id.name or ''"/><br/>
+                        <strong>Expression de besoin :</strong>
+                        <t t-if="object.expression_besoin == 'nouveau'">Nouveau besoin</t>
+                        <t t-elif="object.expression_besoin == 'remplacement'">Remplacement</t>
+                        <t t-elif="object.expression_besoin == 'emprunter'">Emprunter</t>
+                        <t t-else="">-</t>
+                        <br/>
+
+                        <t t-if="object.expression_besoin == 'nouveau'">
+                            <strong>Date de besoin :</strong> <t t-out="object.date_besoin or ''"/><br/>
+                        </t>
+
+                        <t t-if="object.expression_besoin == 'remplacement'">
+                            <strong>Date de remplacement :</strong> <t t-out="object.date_remplacement or ''"/><br/>
+                        </t>
+
+                        <t t-if="object.expression_besoin == 'emprunter'">
+                            <strong>Periode d'emprunt :</strong>
+                            du <strong><t t-out="object.periode_from or ''"/></strong>
+                            au <strong><t t-out="object.periode_to or ''"/></strong>
+                            <br/>
+                        </t>
+                    </p>
+
+                    <t t-set="base_url" t-value="object.get_base_url()"/>
+                    <div style="margin: 16px 0px;">
+                        <a t-attf-href="{{ base_url }}/web#id={{ object.id }}&amp;model=ar.it.demande&amp;view_type=form"
+                           style="background-color:#0f766e;padding:8px 16px;text-decoration:none;color:#fff;border-radius:5px;font-size:13px;">
+                            Acceder a la demande
+                        </a>
+                    </div>
+
+                    <p>Merci.</p>
+                </div>
+            </field>
+        </record>
+
+
+        <!-- 2) N+1 valide -> Demandeur -->
+        <record id="mail_template_it_approved_to_demandeur" model="mail.template">
+            <field name="name">IT - Demande validée (Demandeur)</field>
+            <field name="model_id" ref="model_ar_it_demande"/>
+            <field name="subject">[Demande IT] {{ object.name }} - Validée par le Manager IT</field>
+            <field name="email_from">MI Workflow &lt;DM-ARMaroc@araymond.com&gt;</field>
+            <field name="email_to"></field>
+
+            <field name="body_html" type="html">
+                <div>
+                    <p>Bonjour,</p>
+                    <p>
+                        La demande <strong><t t-out="object.name"/></strong> a été <strong>validée</strong> par le Manager IT.
                     </p>
 
                     <p>
@@ -188,7 +245,7 @@
                 <div>
                     <p>Bonjour,</p>
                     <p>
-                        Votre demande <strong><t t-out="object.name"/></strong> a été marquée comme <strong>Livrée</strong>.
+                        La demande <strong><t t-out="object.name"/></strong> a été marquée comme <strong>Livrée</strong>.
                     </p>
 
                     <p>
@@ -243,7 +300,7 @@
                 <div>
                     <p>Bonjour,</p>
                     <p>
-                        Votre demande <strong><t t-out="object.name"/></strong> a été marquée comme <strong>Empruntée</strong>.
+                        La demande <strong><t t-out="object.name"/></strong> a été marquée comme <strong>Empruntée</strong>.
                     </p>
 
                     <p>
@@ -284,7 +341,7 @@
                 <div>
                     <p>Bonjour,</p>
                     <p>
-                        Votre demande <strong><t t-out="object.name"/></strong> a été <strong>refusée</strong>.
+                        La demande <strong><t t-out="object.name"/></strong> a été <strong>refusée</strong>.
                     </p>
 
                     <p>
@@ -310,6 +367,13 @@
                             <br/>
                         </t>
                     </p>
+
+                    <t t-if="object.refusal_reason">
+                        <p>
+                            <strong>Motif de refus :</strong><br/>
+                            <t t-out="object.refusal_reason"/>
+                        </p>
+                    </t>
 
                     <p>
                         Merci de consulter la demande pour plus de détails.
