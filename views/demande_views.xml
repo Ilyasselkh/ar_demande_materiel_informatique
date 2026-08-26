@@ -17,7 +17,7 @@
         <field name="name">ar.it.demande.list</field>
         <field name="model">ar.it.demande</field>
         <field name="arch" type="xml">
-            <list>
+            <list class="ar_it_responsive_list">
                 <field name="name"/>
                 <field name="demandeur_id"/>
                 <field name="department_id"/>

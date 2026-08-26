@@ -1,5 +1,4 @@
-.o_form_view.ar_it_full_width_form .o_form_sheet_bg,
-.o_form_view .o_form_sheet_bg:has(.ar_it_full_width_sheet) {
+.o_form_view.ar_it_full_width_form .o_form_sheet_bg {
     max-width: none !important;
 }
 
@@ -436,6 +435,33 @@
     min-width: 0 !important;
 }
 
+.o_list_view .ar_it_responsive_list,
+.o_list_renderer table.ar_it_responsive_list {
+    min-width: 760px;
+}
+
+.o_form_view.ar_it_simple_form {
+    .o_form_sheet_bg {
+        padding: 16px;
+    }
+
+    .o_form_sheet {
+        width: 100% !important;
+        max-width: calc(100% - 32px) !important;
+        margin-inline: auto !important;
+        border-radius: 8px;
+    }
+
+    .o_group {
+        width: 100%;
+    }
+
+    .oe_chatter {
+        max-width: 960px;
+        margin-inline: auto;
+    }
+}
+
 .o_form_view.ar_it_confirm_wizard {
     .ar_confirm_box {
         min-height: 145px;
@@ -476,7 +502,7 @@
     }
 }
 
-@media (max-width: 991px) {
+@media (max-width: 1400px) {
     .o_form_view.ar_it_full_width_form .o_form_renderer {
         display: block !important;
     }
@@ -485,14 +511,83 @@
     .o_form_view.ar_it_full_width_form .o-mail-Form-chatter,
     .o_form_view.ar_it_full_width_form .o_FormRenderer_chatterContainer,
     .o_form_view.ar_it_full_width_form .o_ChatterContainer {
+        flex-basis: auto !important;
         max-width: 100% !important;
         width: 100% !important;
     }
 
+    .o_form_view.ar_it_full_width_form .o_form_sheet_bg > .o_form_sheet,
+    .o_form_view .o_form_sheet_bg > .o_form_sheet.ar_it_full_width_sheet {
+        width: calc(100% - 24px) !important;
+        margin-left: 12px !important;
+        margin-right: 12px !important;
+    }
+
+    .o_form_view.ar_it_simple_form {
+        .o_form_sheet_bg {
+            padding: 10px;
+        }
+
+        .o_form_sheet {
+            max-width: 100% !important;
+        }
+    }
+
+    .ar_demande_materiel_informatique_kanban {
+        .o_kanban_record {
+            width: 100% !important;
+        }
+    }
+}
+
+@media (max-width: 991px) {
     .o_form_view.ar_it_demande_form {
+        .o_form_statusbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 8px 10px;
+        }
+
+        .o_form_statusbar .o_statusbar_buttons {
+            display: flex;
+            flex: 0 1 auto;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .o_form_statusbar .o_statusbar_buttons > button {
+            flex: 0 1 auto;
+            min-width: 132px;
+            margin: 0;
+            white-space: normal;
+        }
+
+        .o_statusbar_status {
+            max-width: 100%;
+            overflow-x: auto;
+            padding-bottom: 2px;
+        }
+
         .ar_sortie_caisse_title,
         .ar_sortie_caisse_main_row {
             grid-template-columns: 1fr;
+        }
+
+        .ar_sortie_caisse_title {
+            gap: 12px;
+        }
+
+        .ar_sortie_caisse_panel {
+            min-height: auto;
+        }
+
+        .ar_sortie_caisse_lines {
+            overflow-x: auto;
+        }
+
+        .ar_sortie_caisse_lines .o_field_x2many_list {
+            min-width: 520px;
         }
     }
 }
@@ -503,16 +598,139 @@
             padding: 20px 16px !important;
         }
 
+        .ar_sortie_caisse_title {
+            margin-bottom: 18px;
+            padding-bottom: 18px;
+        }
+
+        .ar_sortie_caisse_label {
+            max-width: 100%;
+            white-space: normal;
+            text-align: center;
+        }
+
         .ar_sortie_caisse_title h1 {
             font-size: 24px;
+            overflow-wrap: anywhere;
         }
 
         .ar_sortie_caisse_title > div:first-child {
+            min-height: auto;
             padding-right: 20px;
         }
 
         .ar_sortie_caisse_amount {
             min-width: 0;
+            min-height: 84px;
+            padding: 14px 16px;
+        }
+
+        .ar_sortie_caisse_panel {
+            padding: 16px;
+        }
+
+        .ar_sortie_caisse_panel .o_inner_group > tbody > tr > td.o_td_label {
+            min-width: 0;
+            width: 38%;
+        }
+
+        .ar_sortie_caisse_borrow .o_group {
+            display: block;
+        }
+
+        .ar_sortie_caisse_borrow .o_group > tbody,
+        .ar_sortie_caisse_borrow .o_group > tbody > tr,
+        .ar_sortie_caisse_borrow .o_group > tbody > tr > td {
+            display: block;
+            width: 100% !important;
+        }
+
+        .ar_request_status_box .badge,
+        .ar_request_status_box .o_field_badge {
+            max-width: 100%;
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+
+        .o_field_many2many_binary .o_attach {
+            width: 100%;
+        }
+    }
+
+    .o_form_view.ar_it_confirm_wizard {
+        .ar_confirm_box {
+            min-height: 0;
+            margin: 10px 0 16px;
+            padding: 20px 14px;
+        }
+
+        .ar_confirm_box h2 {
+            font-size: 16px;
+        }
+
+        footer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        footer button {
+            flex: 1 1 120px;
+            margin: 0 !important;
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .o_form_view.ar_it_full_width_form .o_form_sheet_bg > .o_form_sheet,
+    .o_form_view .o_form_sheet_bg > .o_form_sheet.ar_it_full_width_sheet {
+        width: calc(100% - 12px) !important;
+        margin-left: 6px !important;
+        margin-right: 6px !important;
+    }
+
+    .o_form_view.ar_it_demande_form {
+        .ar_it_full_width_sheet {
+            padding: 16px 10px !important;
+        }
+
+        .o_form_statusbar .o_statusbar_buttons > button {
+            flex-basis: 100%;
+            min-width: 0;
+        }
+
+        .ar_sortie_caisse_title > div:first-child,
+        .ar_sortie_caisse_amount,
+        .ar_sortie_caisse_panel {
+            border-radius: 7px;
+        }
+
+        .ar_sortie_caisse_title h1 {
+            font-size: 22px;
+        }
+
+    }
+
+    .ar_demande_materiel_informatique_kanban {
+        .ar_card_header {
+            display: grid;
+        }
+
+        .ar_card_state {
+            justify-self: start;
+            white-space: normal;
+        }
+    }
+
+    .o_form_view.ar_it_simple_form {
+        .o_form_sheet_bg {
+            padding: 6px;
+        }
+
+        .o_form_sheet {
+            max-width: 100% !important;
+            margin-inline: 0 !important;
+            padding: 16px 10px !important;
         }
     }
 }

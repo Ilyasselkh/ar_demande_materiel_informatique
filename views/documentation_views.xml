@@ -6,7 +6,7 @@
         <field name="name">ar.it.documentation.list</field>
         <field name="model">ar.it.documentation</field>
         <field name="arch" type="xml">
-            <list>
+            <list class="ar_it_responsive_list">
                 <field name="description"/>
                 <field name="file_name"/>
                 <field name="link_url"/>
@@ -21,7 +21,7 @@
         <field name="name">ar.it.documentation.form</field>
         <field name="model">ar.it.documentation</field>
         <field name="arch" type="xml">
-            <form string="Documentation">
+            <form string="Documentation" class="ar_it_simple_form">
                 <sheet>
                     <group>
                         <field name="description"/>

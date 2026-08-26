@@ -3,7 +3,7 @@
         <field name="name">ar.it.traiteur.list</field>
         <field name="model">ar.it.traiteur</field>
         <field name="arch" type="xml">
-            <list>
+            <list class="ar_it_responsive_list">
                 <field name="employee_id"/>
                 <field name="is_available" widget="boolean_toggle"/>
             </list>
@@ -14,7 +14,7 @@
         <field name="name">ar.it.traiteur.form</field>
         <field name="model">ar.it.traiteur</field>
         <field name="arch" type="xml">
-            <form>
+            <form class="ar_it_simple_form">
                 <sheet>
                     <group>
                         <field name="employee_id"/>

@@ -3,7 +3,7 @@
         <field name="name">ar.it.materiel.list</field>
         <field name="model">ar.it.materiel</field>
         <field name="arch" type="xml">
-            <list>
+            <list class="ar_it_responsive_list">
                 <field name="description"/>
                 <field name="is_available" widget="boolean_toggle"/>
             </list>
@@ -14,7 +14,7 @@
         <field name="name">ar.it.materiel.form</field>
         <field name="model">ar.it.materiel</field>
         <field name="arch" type="xml">
-            <form>
+            <form class="ar_it_simple_form">
                 <sheet>
                     <group>
                         <field name="description"/>
