@@ -272,7 +272,6 @@ class ARITDemande(models.Model):
             self._send_template(
                 "ar_demande_materiel_informatique.mail_template_it_to_manager_it",
                 self._get_manager_it_emails(),
-                _("Aucun email trouve pour le Manager IT. Verifiez qu'un utilisateur actif a le groupe AR IT - Manager IT et une adresse email."),
             )
             return
 
